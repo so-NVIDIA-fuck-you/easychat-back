@@ -14,7 +14,7 @@ public class UserInfo {
     private String nickName;
     private String userId;
     private LocalDateTime createTime;
-    private String Status;
+    private Boolean Status;
     private LocalDateTime lastLoginTime;
 
 }

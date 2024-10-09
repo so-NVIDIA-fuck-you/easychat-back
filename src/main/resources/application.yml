@@ -6,6 +6,10 @@ ws:
   port: 5051
 
 
+admin:
+  email: 12345678@qq.com
+
+
 spring:
   profiles:
     active: dev

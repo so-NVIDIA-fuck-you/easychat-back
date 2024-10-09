@@ -7,6 +7,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.itheima.easychatback.Utils.RedisUtils;
 import org.itheima.easychatback.entity.UserInfo;
 import org.itheima.easychatback.entity.constants.Constants;
+import org.itheima.easychatback.entity.dto.TokenUserInfoDto;
 import org.itheima.easychatback.exception.BusinessException;
 import org.itheima.easychatback.result.Result;
 import org.itheima.easychatback.service.UserInfoService;
@@ -60,6 +61,7 @@ public class AccountController {
                 throw new BusinessException("图片验证码不正确");
             }
             userInfoService.register(email,nickName,passWord);
+
             return Result.success();
 
         } finally {
@@ -77,7 +79,8 @@ public class AccountController {
             if (!checkCode.equalsIgnoreCase((String) redisUtils.get(Constants.REDIS_KEY_CHECK_CODE + checkCodeKey))) {
                 throw new BusinessException("图片验证码不正确");
             }
-            UserInfo userInfo=userInfoService.login(email,passWord);
+
+            TokenUserInfoDto tokenUserInfoDto=userInfoService.login(email,passWord);
             return Result.success();
 
         } finally {
