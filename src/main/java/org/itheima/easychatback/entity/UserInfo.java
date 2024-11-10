@@ -13,8 +13,20 @@ public class UserInfo {
     private String passWord;
     private String nickName;
     private String userId;
+
+    private Integer sex;
+
+    private Integer joinType;
+
+    private String personalSignature;
+
+    private String areaCode;
+
+    private String areaName;
+
     private LocalDateTime createTime;
     private Boolean Status;
     private LocalDateTime lastLoginTime;
+    private Long lastOffTime;
 
 }

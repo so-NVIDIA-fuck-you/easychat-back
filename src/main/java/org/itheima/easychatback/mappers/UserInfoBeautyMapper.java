@@ -7,4 +7,6 @@ public interface UserInfoBeautyMapper {
 
     @Select("select * from user_info_beauty where email=#{email}")
     UserInfoBeauty selectByEmail(String email);
+
+    void updateById(UserInfoBeauty updateBeauty, int id);
 }

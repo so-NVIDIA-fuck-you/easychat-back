@@ -7,14 +7,18 @@ import org.itheima.easychatback.entity.config.AppConfig;
 import org.itheima.easychatback.entity.constants.Constants;
 import org.itheima.easychatback.entity.dto.TokenUserInfoDto;
 import org.itheima.easychatback.entity.enums.BeautyAccountStatusEnum;
+import org.itheima.easychatback.entity.enums.JoinTypeEnum;
 import org.itheima.easychatback.entity.enums.UserContactTypeEnum;
+import org.itheima.easychatback.entity.vo.UserInfoVO;
 import org.itheima.easychatback.exception.BusinessException;
 import org.itheima.easychatback.mappers.UserInfoBeautyMapper;
 import org.itheima.easychatback.mappers.UserInfoMapper;
 import org.itheima.easychatback.redis.RedisComponent;
 import org.itheima.easychatback.service.UserInfoService;
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.HashMap;
@@ -36,7 +40,10 @@ public class UserInfoServiceImpl implements UserInfoService {
     private RedisComponent redisComponent;
 
 
+
+
     @Override
+    @Transactional(rollbackFor = Exception.class)
     public void register(String email, String passWord, String nickName) {
         Map<String, Object> result = new HashMap<>();
         UserInfo userInfo = userInfoMapper.selectByEmail(email);
@@ -58,10 +65,16 @@ public class UserInfoServiceImpl implements UserInfoService {
         userInfo.setPassWord(StringTools.encodeMD5(passWord));
         userInfo.setCreateTime(LocalDateTime.now());
         userInfo.setLastLoginTime(LocalDateTime.now());
+        userInfo.setStatus(Constants.ENABLE);
+        userInfo.setLastOffTime(System.currentTimeMillis());
+        userInfo.setJoinType(JoinTypeEnum.APPLY.getType());
+
+
         userInfoMapper.insert(userInfo);
         if (userBeautyAccount) {
             UserInfoBeauty updateBeauty = new UserInfoBeauty();
             updateBeauty.setStatus(BeautyAccountStatusEnum.USEED.getStatus());
+            userInfoBeautyMapper.updateById(updateBeauty,beautyAccount.getId());
         }
         //TODO 创建机器人好友
 
@@ -70,9 +83,10 @@ public class UserInfoServiceImpl implements UserInfoService {
 
 
     @Override
-    public TokenUserInfoDto login(String email, String passWord) {
+    public UserInfoVO login(String email, String passWord) {
 
         UserInfo userInfo=userInfoMapper.selectByEmail(email);
+        System.out.println(StringTools.encodeMD5(passWord));
         if (null == userInfo||!userInfo.getPassWord().equals(StringTools.encodeMD5(passWord))) {
             throw new BusinessException("账号或者密码不存在");
         }
@@ -82,9 +96,23 @@ public class UserInfoServiceImpl implements UserInfoService {
         //TODO 查询我的群组
         //TODO 查询我的联系人
         TokenUserInfoDto tokenUserInfoDto=getTokenUserInfoDto(userInfo);
+         Long lastHeartBeat=redisComponent.getUserHeartBeat(userInfo.getUserId());
+         if (null != lastHeartBeat) {
+             throw new BusinessException("此账号已在别处登录，请退出后在登陆");
+         }
+         //生成token
+         String token=StringTools.encodeMD5(tokenUserInfoDto.getUserId()+StringTools.getRandomString(Constants.LENGTH_20));
+         tokenUserInfoDto.setToken(token);
+         redisComponent.saveTokenUserInfoDto(tokenUserInfoDto);
 
 
-        return tokenUserInfoDto;
+        UserInfoVO userInfoVO= new UserInfoVO();
+        BeanUtils.copyProperties(userInfo,userInfoVO);
+
+        userInfoVO.setToken(tokenUserInfoDto.getToken());
+        userInfoVO.setAdmin(tokenUserInfoDto.getAdmin());
+
+        return userInfoVO;
 
 
     }

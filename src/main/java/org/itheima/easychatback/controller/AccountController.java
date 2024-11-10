@@ -5,9 +5,8 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.itheima.easychatback.Utils.RedisUtils;
-import org.itheima.easychatback.entity.UserInfo;
 import org.itheima.easychatback.entity.constants.Constants;
-import org.itheima.easychatback.entity.dto.TokenUserInfoDto;
+import org.itheima.easychatback.entity.vo.UserInfoVO;
 import org.itheima.easychatback.exception.BusinessException;
 import org.itheima.easychatback.result.Result;
 import org.itheima.easychatback.service.UserInfoService;
@@ -15,6 +14,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -50,17 +50,18 @@ public class AccountController {
         return Result.success(resultMap);
     }
 
-    @GetMapping("/register")
+    @PostMapping("/register")
     public Result register(@NotEmpty String checkCodeKey,
                            @NotEmpty @Email String email,
                            @NotEmpty String passWord,
                            @NotEmpty String nickName,
                            @NotEmpty String checkCode) {
         try {
+
             if (!checkCode.equalsIgnoreCase((String) redisUtils.get(Constants.REDIS_KEY_CHECK_CODE + checkCodeKey))) {
                 throw new BusinessException("图片验证码不正确");
             }
-            userInfoService.register(email,nickName,passWord);
+            userInfoService.register(email,passWord,nickName);
 
             return Result.success();
 
@@ -70,7 +71,7 @@ public class AccountController {
     }
 
 
-    @GetMapping("/login")
+    @PostMapping("/login")
     public Result login(@NotEmpty String checkCodeKey,
                            @NotEmpty @Email String email,
                            @NotEmpty String passWord,
@@ -80,8 +81,9 @@ public class AccountController {
                 throw new BusinessException("图片验证码不正确");
             }
 
-            TokenUserInfoDto tokenUserInfoDto=userInfoService.login(email,passWord);
-            return Result.success();
+            UserInfoVO userInfoVO=userInfoService.login(email,passWord);
+
+            return Result.success(userInfoVO);
 
         } finally {
             redisUtils.delete(Constants.REDIS_KEY_CHECK_CODE + checkCodeKey);

@@ -211,8 +211,8 @@ public class RedisUtils<V> {
      *
      * @return 值
      */
-    public String get(String key) {
-        return redisTemplate.opsForValue().get(key);
+    public Object get(String key) {
+        return  redisTemplate.opsForValue().get(key);
     }
 
     /**
