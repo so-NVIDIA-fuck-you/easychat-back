@@ -1,8 +1,10 @@
 package org.itheima.easychatback.service.Impl;
 
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import jakarta.annotation.Resource;
 import org.itheima.easychatback.Utils.StringTools;
-import org.itheima.easychatback.entity.UserInfo;
-import org.itheima.easychatback.entity.UserInfoBeauty;
+import org.itheima.easychatback.entity.po.UserInfo;
+import org.itheima.easychatback.entity.po.UserInfoBeauty;
 import org.itheima.easychatback.entity.config.AppConfig;
 import org.itheima.easychatback.entity.constants.Constants;
 import org.itheima.easychatback.entity.dto.TokenUserInfoDto;
@@ -11,8 +13,8 @@ import org.itheima.easychatback.entity.enums.JoinTypeEnum;
 import org.itheima.easychatback.entity.enums.UserContactTypeEnum;
 import org.itheima.easychatback.entity.vo.UserInfoVO;
 import org.itheima.easychatback.exception.BusinessException;
-import org.itheima.easychatback.mappers.UserInfoBeautyMapper;
-import org.itheima.easychatback.mappers.UserInfoMapper;
+import org.itheima.easychatback.mapper.UserInfoBeautyMapper;
+import org.itheima.easychatback.mapper.UserInfoMapper;
 import org.itheima.easychatback.redis.RedisComponent;
 import org.itheima.easychatback.service.UserInfoService;
 import org.springframework.beans.BeanUtils;
@@ -23,7 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.Map;
-
+//extends ServiceImpl<UserInfoMapper, UserInfo>
 @Service
 public class UserInfoServiceImpl implements UserInfoService {
 
@@ -86,6 +88,7 @@ public class UserInfoServiceImpl implements UserInfoService {
     public UserInfoVO login(String email, String passWord) {
 
         UserInfo userInfo=userInfoMapper.selectByEmail(email);
+        System.out.println(userInfo.toString());
         System.out.println(StringTools.encodeMD5(passWord));
         if (null == userInfo||!userInfo.getPassWord().equals(StringTools.encodeMD5(passWord))) {
             throw new BusinessException("账号或者密码不存在");
@@ -123,7 +126,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         tokenUserInfoDto.setNickName(userInfo.getNickName());
 
         String adminEmail=appConfig.getAdminEmails();
-        if (!adminEmail.equals(userInfo.getEmail()))
+        if (adminEmail.equals(userInfo.getEmail()))
         {
             tokenUserInfoDto.setAdmin(true);
         }else{

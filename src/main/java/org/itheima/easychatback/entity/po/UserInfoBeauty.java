@@ -1,4 +1,4 @@
-package org.itheima.easychatback.entity;
+package org.itheima.easychatback.entity.po;
 
 import lombok.Data;
 

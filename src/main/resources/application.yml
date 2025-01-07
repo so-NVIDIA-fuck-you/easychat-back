@@ -7,7 +7,7 @@ ws:
 
 
 admin:
-  email: 12345678@qq.com
+  email: 3160687598@qq.com
 
 
 spring:
@@ -23,6 +23,9 @@ spring:
       password: ${sky.datasource.password}
 
 
+
+
+
   data:
     redis:
       host: ${sky.redis.host}
@@ -31,10 +34,23 @@ spring:
       database: ${sky.redis.database}
 
 
-mybatis:
-  #mapper????
-  mapper-locations: classpath:mapper/*.xml
-  type-aliases-package: org.itheima.easychatback.entity
-  configuration:
-    #??????
-    map-underscore-to-camel-case: true
+
+mybatis-plus:
+    # Mapper路径配置
+    mapper-locations: classpath:mybatis/mapper/*.xml
+    # 实体类路径配置（如果你的实体类和Mapper没有放在默认包下）
+    typeAliasesPackage: org.itheima.easychatback.entity.po
+    # SQL日志输出开关
+
+#mybatis:
+#  #mapper配置文件
+#  mapper-locations: classpath:mybatis/mapper/*.xml
+#  configuration:
+#    #开启驼峰命名
+#    map-underscore-to-camel-case: true
+
+
+
+
+
+

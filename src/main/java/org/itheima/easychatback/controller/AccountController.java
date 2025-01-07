@@ -5,13 +5,15 @@ import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.extern.slf4j.Slf4j;
 import org.itheima.easychatback.Utils.RedisUtils;
+import org.itheima.easychatback.annotation.GlobalInterceptor;
 import org.itheima.easychatback.entity.constants.Constants;
 import org.itheima.easychatback.entity.vo.UserInfoVO;
 import org.itheima.easychatback.exception.BusinessException;
+import org.itheima.easychatback.mapper.UserInfoMapper;
+import org.itheima.easychatback.redis.RedisComponent;
 import org.itheima.easychatback.result.Result;
 import org.itheima.easychatback.service.UserInfoService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -31,8 +33,13 @@ public class AccountController {
 
     @Autowired
     private RedisUtils redisUtils;
+
     @Autowired
-    private UserInfoService userInfoService;
+    private  UserInfoService userInfoService;
+
+    @Autowired
+    private RedisComponent redisComponent;
+
 
 
     @RequestMapping("/checkCode")
@@ -89,6 +96,13 @@ public class AccountController {
             redisUtils.delete(Constants.REDIS_KEY_CHECK_CODE + checkCodeKey);
         }
     }
+
+    @GetMapping("/getSysSetting")
+    @GlobalInterceptor
+    public Result login() {
+        return Result.success(redisComponent.getSysSetting());
+    }
+
 
 
 

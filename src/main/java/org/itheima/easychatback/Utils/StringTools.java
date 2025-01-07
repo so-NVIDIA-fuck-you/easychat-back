@@ -22,6 +22,10 @@ public class StringTools {
     public static String getUserId() {
         return "U"+getRandomNumber(Constants.LENGTH_11);
     }
+
+    public static String getGroupId() {
+        return "G"+getRandomNumber(Constants.LENGTH_11);
+    }
     public static String getRandomNumber(Integer count) {
         return RandomStringUtils.random(count,false,true);
     }

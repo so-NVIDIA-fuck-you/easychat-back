@@ -1,13 +1,12 @@
 package org.itheima.easychatback.service;
 
 
-import org.itheima.easychatback.entity.UserInfo;
-import org.itheima.easychatback.entity.dto.TokenUserInfoDto;
+import com.baomidou.mybatisplus.extension.service.IService;
+import org.itheima.easychatback.entity.po.UserInfo;
 import org.itheima.easychatback.entity.vo.UserInfoVO;
 
-import java.util.Map;
-
-public interface UserInfoService {
+//extends IService<UserInfo>
+public interface UserInfoService  {
 
     //用户注册
     void register(String email, String passWord, String nickName);

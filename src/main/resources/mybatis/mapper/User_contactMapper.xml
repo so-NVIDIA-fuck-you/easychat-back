@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="org.itheima.easychatback.mapper.User_contactMapper">
+
+    <resultMap id="base_result_map" type="User_contact">
+        <id property="user_id" column="user_id"></id>
+        <result property="contact_id" column="contact_id"></result>
+        <result property="status" column="status"></result>
+        <result property="contact_type" column="contact_type"></result>
+        <result property="create_time" column="create_time"></result>
+        <result property="last_update_time" column="last_update_time"></result>
+    </resultMap>
+    
+
+    <select id="selectlist" resultMap="base_result_map">
+         select *
+         <if test="query.queryUserInfo"></if>
+
+    </select>
+
+</mapper>

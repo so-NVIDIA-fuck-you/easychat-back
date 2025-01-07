@@ -12,4 +12,14 @@ public class TokenUserInfoDto implements Serializable {
     private String nickName;
     private Boolean admin;
 
+    @Override
+    public String toString() {
+        return "TokenUserInfoDto{" +
+                "token='" + token + '\'' +
+                ", userId='" + userId + '\'' +
+                ", nickName='" + nickName + '\'' +
+                ", admin=" + admin +
+                '}';
+    }
+
 }
